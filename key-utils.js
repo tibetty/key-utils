@@ -1,58 +1,44 @@
 "use strict";
-let ku$assert = (condition, errMsg) => {
-	if (!condition) {
-		throw Error(errMsg);
-	}
-}
 
-const keyUtils = {
-	ecdhToEcdsa: async (keypair, extractable) => {
+const keyUtils = (() => {
+	function ku$assert(condition, errMsg) {
+		if (!condition) {
+			throw Error(errMsg);
+		}
+	}
+	async function ku$ConvertKeyPair(keypair, extractable, srcAlgoName, dstAlgoName, pkOps, skOps) {
+		const errMessages = [
+			'Not a valid key pair',
+			'Key pair is not extractable',
+			'Web Crypto is not available'
+		];
+
 		let pk = keypair.publicKey, sk = keypair.privateKey;
-		ku$assert(pk !== null && sk !== null, 'Not a valid key pair');
-		ku$assert(pk.algorithm !== null && pk.algorithm.name === 'ECDH' && sk.algorithm !== null && sk.algorithm.name === 'ECDH', 'Not an ECDH key pair');
-		ku$assert(pk.extractable && sk.extractable, 'Key pair is not extractable');
-		ku$assert(crypto !== null && crypto.subtle !== null, 'Web crypto is not available');
+		ku$assert(pk !== null && sk !== null, errMessages[0]);
+		ku$assert(pk.algorithm !== null && pk.algorithm.name === srcAlgoName && sk.algorithm !== null && sk.algorithm.name === srcAlgoName, errMessages[0]);
+		ku$assert(pk.extractable && sk.extractable, errMessages[1]);
+		ku$assert(crypto !== null && crypto.subtle !== null, errMessages[2]);
 		const subtle = crypto.subtle;
 		extractable = extractable || false;
 		let publicKey = await subtle.importKey('raw', await subtle.exportKey('raw', pk), {
-				name: 'ECDSA',
+				name: dstAlgoName,
 				namedCurve: pk.algorithm.namedCurve
 			},
 			extractable,
-			['verify']
+			pkOps
 		);
-		let privateKey = await subtle.importKey('jwk', await Object.assign(await subtle.exportKey('jwk', sk), {key_ops: ['sign']}), {
-				name: 'ECDSA',
+		let privateKey = await subtle.importKey('jwk', await Object.assign(await subtle.exportKey('jwk', sk), {key_ops: skOps}), {
+				name: dstAlgoName,
 				namedCurve: sk.algorithm.namedCurve
 			},
 			extractable,
-			['sign']
+			skOps
 		);	
-		return {privateKey, publicKey};
-	},
-
-	ecdsaToEcdh: async (keypair, extractable) => {
-		let pk = keypair.publicKey, sk = keypair.privateKey;
-		ku$assert(pk !== null && sk !== null, 'Not a valid key pair');
-		ku$assert(pk.algorithm !== null && pk.algorithm.name === 'ECDSA' && sk.algorithm !== null && sk.algorithm.name === 'ECDSA', 'Not an ECDSA key pair');
-		ku$assert(pk.extractable && sk.extractable, 'Key pair is not extractable');
-		ku$assert(crypto !== null && crypto.subtle !== null, 'Web crypto is not available');
-		const subtle = crypto.subtle;
-		extractable = extractable || false;
-		let publicKey = await subtle.importKey('raw', await subtle.exportKey('raw', pk), {
-				name: 'ECDH',
-				namedCurve: pk.algorithm.namedCurve
-			},
-			extractable,
-			[]
-		);
-		let privateKey = await subtle.importKey('jwk', await Object.assign(await subtle.exportKey('jwk', sk), {key_ops: ['deriveBits', 'deriveKey']}), {
-				name: 'ECDH',
-				namedCurve: sk.algorithm.namedCurve
-			},
-			extractable,
-			['deriveBits', 'deriveKey']	
-		);
-		return {privateKey, publicKey};
+		return {publicKey, privateKey};
 	}
-};
+
+	return {
+		ecdhToEcdsa: async (keypair, extractable) => await ku$ConvertKeyPair(keypair, extractable, 'ECDH', 'ECDSA', ['verify'], ['sign']),
+		ecdsaToEcdh: async (keypair, extractable) => await ku$ConvertKeyPair(keypair, extractable, 'ECDSA', 'ECDH', [], ['deriveBits', 'deriveKey'])
+	};
+})();

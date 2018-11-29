@@ -1,0 +1,31 @@
+{
+  "name": "key-utils",
+  "version": "0.5.0",
+  "description": "A WebCrypto key utility which can convert keys between ECDH & ECDSA right now - more functions to be discovered and added",
+  "main": "key-utils.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tibetty/key-utils.git"
+  },
+  "keywords": [
+    "WebCrypto",
+    "web",
+    "cryptography",
+    "ecc",
+    "key",
+    "pair",
+    "ECDH",
+    "ECIES",
+    "ECDSA",
+    "browser"
+  ],
+  "author": "tibetty",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tibetty/key-utils/issues"
+  },
+  "homepage": "https://github.com/tibetty/key-utils#readme"
+}
