@@ -15,8 +15,7 @@ In many situations (esp. blockchain related ones), we need to maintain ONE keypa
 ```
 
 ```js
-const subtle = crypto.subtle;
-let xkp = await subtle.generateKey({
+let xkp = await crypto.subtle.generateKey({
 		name: 'ECDH',
 		namedCurve: 'P-256'
 	},
