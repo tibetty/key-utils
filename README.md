@@ -11,14 +11,14 @@ Some people argue that this usage will compromise the security, so please DO ens
 
 ## Usage
 
-`Add the reference in HTML file`
+*Add the reference in HTML file*
 ```html
 ...
 <script src="/your/path/to/key-utils.js"></script>
 ...
 ```
 
-`Now you can use this utility in your JavaScript code`
+*Now you can use this utility in your JavaScript code*
 ```js
 let xkp = await crypto.subtle.generateKey({
 		name: 'ECDH',
