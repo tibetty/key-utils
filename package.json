@@ -27,5 +27,6 @@
   "bugs": {
     "url": "https://github.com/tibetty/key-utils/issues"
   },
-  "homepage": "https://github.com/tibetty/key-utils#readme"
+  "homepage": "https://github.com/tibetty/key-utils#readme",
+  "dependencies": {}
 }
