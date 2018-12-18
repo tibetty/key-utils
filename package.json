@@ -1,6 +1,6 @@
 {
   "name": "key-utils",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "A WebCrypto key utility which can convert keys between ECDH & ECDSA right now - more functions to be discovered and added",
   "main": "key-utils.js",
   "scripts": {
